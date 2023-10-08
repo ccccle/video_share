@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @TableName("user")
 public class User {
+    public static final String DEFAULT_AVATAR = "http://192.168.200.130:9000/video-share/default.jpg";
     @TableId
     private Long id;
     @TableField("email")
@@ -24,5 +25,5 @@ public class User {
     private LocalDateTime updateTime;
     @TableField("flag")
     @TableLogic
-    private Integer flag;
+    private Integer flag = 0;
 }

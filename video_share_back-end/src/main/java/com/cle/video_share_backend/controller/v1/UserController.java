@@ -1,12 +1,9 @@
 package com.cle.video_share_backend.controller.v1;
 
-import com.cle.video_share_backend.common.BaseResponse;
-import com.cle.video_share_backend.common.CodeEnum;
-import com.cle.video_share_backend.common.Response;
-import com.cle.video_share_backend.service.EmailService;
+import com.cle.video_share_backend.common.ResponseResult;
+import com.cle.video_share_backend.exception.ServiceException;
 import com.cle.video_share_backend.service.UserService;
 import com.cle.video_share_backend.vo.UserVo;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,18 +14,17 @@ public class UserController {
     private UserService userService;
     //发送验证码
     @GetMapping("/sendCode")
-    public Response getLoginCode(String email){
+    public ResponseResult getLoginCode(String email){
         userService.sendCode(email);
-        Response response = new Response();
-        response.setCode(CodeEnum.SUCCESS.getCode());
-        response.setMsg(CodeEnum.SUCCESS.getMsg());
-        return response;
+        return ResponseResult.success();
     }
     //登录
     @PostMapping("/login")
-    public Response login(@RequestBody UserVo userVo){
-        userService.login(userVo);
-        Response response = new Response();
-        return response;
+    public ResponseResult login(@RequestBody UserVo userVo) throws ServiceException {
+        UserVo vo = userService.login(userVo);
+        return ResponseResult.success(1,"登录成功",vo);
     }
+    //获取个人信息
+//    @GetMapping("/getUserInfo")
+//    public ResponseResult getUserInfo()
 }
