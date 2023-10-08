@@ -4,6 +4,22 @@ spring:
     url: jdbc:mysql://localhost:3306/video_share?serverTimezone=Shanghai&?useUnicode=true&characterEncoding=utf8
     username: root
     password: root
+  data:
+    redis:
+      host: 192.168.200.130
+      port: 6379
+      timeout: 6000
+      password: 123
+  mail:
+    host: smtp.qq.com
+    username: 1175414205@qq.com
+    password: swuwzbhcjhryhchh
+    default-encoding: UTF-8
+minio:
+  endpoint: 192.168.200.130:9000
+  accessKey: cle
+  secretKey: 98735521
+  bucket: video-share
 mybatis-plus:
   global-config:
     db-config:
