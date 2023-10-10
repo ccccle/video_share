@@ -12,6 +12,7 @@ import com.cle.video_share_backend.utils.JWTUtils;
 import com.cle.video_share_backend.utils.RedisUtils;
 import com.cle.video_share_backend.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new ServiceException("验证码错误");
         }
         return userVo;
+    }
+
+    @Override
+    public UserVo getUserInfo(Long id) {
+        User userDb = this.getById(id);
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(userDb,userVo);
+        return userVo;
+
     }
 }

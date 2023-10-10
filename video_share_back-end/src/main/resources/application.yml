@@ -15,8 +15,12 @@ spring:
     username: 1175414205@qq.com
     password: swuwzbhcjhryhchh
     default-encoding: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
 minio:
-  endpoint: 192.168.200.130:9000
+  endpoint: http://192.168.200.130:9000
   accessKey: cle
   secretKey: 98735521
   bucket: video-share

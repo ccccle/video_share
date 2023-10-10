@@ -23,7 +23,7 @@ public class User {
     private LocalDateTime createTime;
     @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
-    @TableField("flag")
+    @TableField(value = "flag",fill = FieldFill.INSERT)
     @TableLogic
-    private Integer flag = 0;
+    private Integer flag ;
 }

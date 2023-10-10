@@ -15,6 +15,19 @@ const router = createRouter({
           component: () => import('@/views/home/Home.vue')
         }
       ]
+    },
+    {
+      path: '/publish',
+      name: 'publish',
+      component: () => import('@/views/publish/Publish.vue'),
+      redirect: '/publish',
+      children: [
+        {
+          path: '/publish',
+          name: 'publish',
+          component: () => import('@/views/publish/publish/publish.vue')
+        }
+      ]
     }
   ]
 })

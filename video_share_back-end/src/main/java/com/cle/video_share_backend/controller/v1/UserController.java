@@ -25,6 +25,10 @@ public class UserController {
         return ResponseResult.success(1,"登录成功",vo);
     }
     //获取个人信息
-//    @GetMapping("/getUserInfo")
-//    public ResponseResult getUserInfo()
+    @GetMapping("/getUserInfo")
+    public ResponseResult getUserInfo(Long id){
+        UserVo userInfo = userService.getUserInfo(id);
+        return ResponseResult.success(1,"获取成功",userInfo);
+    }
+
 }

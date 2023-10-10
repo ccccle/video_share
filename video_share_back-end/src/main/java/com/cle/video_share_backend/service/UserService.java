@@ -11,4 +11,6 @@ public interface UserService extends IService<User> {
     void sendCode(String email);
 //登录
 UserVo login(UserVo userVo) throws ServiceException;
+//获取个人信息
+    UserVo getUserInfo(Long id);
 }
