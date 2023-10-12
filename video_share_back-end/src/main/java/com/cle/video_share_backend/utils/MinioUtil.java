@@ -227,7 +227,7 @@ public class MinioUtil {
      * @param objectName  对象名
      * @return ObjectWriteResponse对象
      */
-    public static ObjectWriteResponse uploadFile(String bucketName, MultipartFile file, String objectName) throws Exception {
+    public static ObjectWriteResponse uploadFile(String bucketName,  String objectName,MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
         Optional<MediaType> optional = MediaTypeFactory.getMediaType(objectName);
         String mediaType = optional.orElseThrow(() -> new RuntimeException("文件类型暂不支持")).toString();

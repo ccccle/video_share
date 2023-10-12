@@ -11,11 +11,11 @@ public class Video {
     private Long id;
     @TableField("video_name")
     private String videoName;
-    @TableField("videoCover")
+    @TableField("video_cover")
     private String videoCover;
     @TableField("video_url")
     private String videoUrl;
-    @TableField("video_name")
+    @TableField("video_description")
     private String videoDescription;
     @TableField("channel_id")
     private Long channelId;

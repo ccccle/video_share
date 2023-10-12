@@ -5,10 +5,12 @@ import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.*;
 
 import java.io.*;
+import java.util.UUID;
 
 public class FfmpegUtil {
+    //把其他格式的视频转换为MP4格式
     public static String videoToMP4(InputStream inputStream) {
-        String outputVideoPath = "output.mp4"; // 输出视频文件的路径
+        String outputVideoPath = UUID.randomUUID()+".mp4"; // 输出视频文件的路径
 
         try {
 
@@ -51,14 +53,33 @@ public class FfmpegUtil {
                 System.err.println("转换失败: " + ffmpegOutput);
             }
 
-            // 关闭输入流
-            inputStream.close();
             return outputVideoPath;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return null;
     }
+
+    public static String getFirstFrame(String videoPath) {
+        String outputImagePath = UUID.randomUUID() + ".png"; // 输出视频文件的路径
+
+
+        // 使用 ffmpeg 获取视频封面
+        String cmd = "ffmpeg -i " + videoPath + " -ss 00:00:01 -vframes 1 -y -loglevel quiet " + outputImagePath;
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(cmd);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return outputImagePath;
+    }
+
 }
 
 

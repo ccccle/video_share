@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "minio")
 @Data
 public class MinioProperties {
+
     /**
      * 对象存储服务的URL
      */
