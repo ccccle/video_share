@@ -28,6 +28,11 @@ const router = createRouter({
           component: () => import('@/views/publish/publish/publish.vue')
         }
       ]
+    },
+    {
+      path: '/videoDetail',
+      name: 'videoDetail',
+      component: () => import('@/views/videoDetail/videoDetail.vue')
     }
   ]
 })

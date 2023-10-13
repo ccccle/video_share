@@ -12,10 +12,14 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.5.1",
+    "dplayer": "^1.27.1",
     "element-plus": "^2.3.14",
+    "hls.js": "^1.4.12",
     "pinia": "^2.1.6",
     "pinia-plugin-persistedstate": "^3.2.0",
+    "supervideo": "^1.1.7",
     "vue": "^3.3.4",
+    "vue-dplayer": "^0.0.10",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
@@ -27,8 +31,10 @@
     "less": "^4.2.0",
     "prettier": "^3.0.3",
     "sass": "^1.68.0",
+    "svg-sprite-loader": "^6.0.11",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.25.2",
-    "vite": "^4.4.9"
+    "vite": "^4.4.9",
+    "vite-plugin-vue-svg-icons": "^3.1.4"
   }
 }

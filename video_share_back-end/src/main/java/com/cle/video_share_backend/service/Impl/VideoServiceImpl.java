@@ -124,4 +124,14 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return videoVoPage;
 
     }
+
+    @Override
+    public VideoVo getVideo(Long id) {
+
+        Video video = this.getById(id);
+        VideoVo videoVo = new VideoVo();
+        BeanUtils.copyProperties(video,videoVo);
+        return videoVo;
+
+    }
 }

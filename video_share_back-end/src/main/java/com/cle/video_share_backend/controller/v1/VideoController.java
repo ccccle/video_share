@@ -38,4 +38,10 @@ public class VideoController {
         Page<VideoVo> userVoList =  videoService.feed(size,page,key);
         return ResponseResult.success(userVoList);
     }
+    //获取具体视频信息
+    @GetMapping("/getVideo")
+    public ResponseResult getVideo(Long id){
+       VideoVo videoVo = videoService.getVideo(id);
+       return ResponseResult.success(videoVo);
+    }
 }

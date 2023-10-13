@@ -18,6 +18,8 @@ public class VideoVo {
         this.videoDescription = videoDescription;
         this.channelId = channelId;
     }
+    @JsonProperty("id")
+    private Long id;
     @JsonProperty("video_cover")
     private MultipartFile videoCover;
     @JsonProperty("video_data")
