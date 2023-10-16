@@ -54,6 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             map.put("email", user.getEmail());
             map.put("name", user.getName());
             map.put("avatar", user.getAvatar());
+            userVo.setId(user.getId());
             userVo.setName(user.getName());
             userVo.setAvatar(user.getAvatar());
             userVo.setToken(JWTUtils.getToken(map));

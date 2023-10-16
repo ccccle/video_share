@@ -130,8 +130,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
         Video video = this.getById(id);
         VideoVo videoVo = new VideoVo();
+        User user = userMapper.selectById(video.getUserId());
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(user,userVo);
         BeanUtils.copyProperties(video,videoVo);
+        videoVo.setUserVo(userVo);
         return videoVo;
-
     }
 }

@@ -10,6 +10,6 @@ public interface VideoService extends IService<Video> {
     void uploadVideo(VideoVo videoVo);
     //视频流
     Page<VideoVo> feed(Integer size, Integer page, String key);
-
+    //获取详细视频信息
     VideoVo getVideo(Long id);
 }

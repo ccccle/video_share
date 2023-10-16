@@ -17,6 +17,8 @@ public class FfmpegUtil {
             String[] cmd = {
                     "ffmpeg",
                     "-i", "pipe:0", // 使用管道作为输入
+                    "-analyzeduration", "2147483647", // 设置适当的值
+                    "-probesize", "2147483647", // 设置适当的值
                     "-c:v", "libx264",
                     "-c:a", "aac",
                     outputVideoPath
