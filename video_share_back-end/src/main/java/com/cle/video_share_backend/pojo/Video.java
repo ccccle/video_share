@@ -1,6 +1,7 @@
 package com.cle.video_share_backend.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,12 @@ public class Video {
     private String videoUrl;
     @TableField("video_description")
     private String videoDescription;
+    @TableField("like_count")
+    private Long likeCount;
+    @TableField("comment_count")
+    private Long commentCount;
+    @TableField("play_count")
+    private Long playCount;
     @TableField("channel_id")
     private Long channelId;
     @TableField("channel_name")

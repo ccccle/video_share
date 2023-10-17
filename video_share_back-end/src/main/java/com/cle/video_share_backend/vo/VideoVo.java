@@ -1,5 +1,6 @@
 package com.cle.video_share_backend.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,12 @@ public class VideoVo {
     private String videoUrl;
     @JsonProperty("video_name")
     private String videoName;
+    @JsonProperty("like_count")
+    private Long likeCount;
+    @JsonProperty("comment_count")
+    private Long commentCount;
+    @JsonProperty("play_count")
+    private Long playCount;
     @JsonProperty("video_description")
     private String videoDescription;
     @JsonProperty("channel_id")
@@ -38,6 +45,7 @@ public class VideoVo {
     private LocalDateTime createTime;
     @JsonProperty("user")
     private UserVo userVo;
-
+    @JsonProperty("like")
+    private LikeVo likeVo;
 
 }

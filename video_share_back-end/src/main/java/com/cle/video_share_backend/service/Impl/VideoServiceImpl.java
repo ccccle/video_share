@@ -3,17 +3,22 @@ package com.cle.video_share_backend.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cle.video_share_backend.common.RedisConstant;
 import com.cle.video_share_backend.config.MinioProperties;
 import com.cle.video_share_backend.mapper.ChannelMapper;
 import com.cle.video_share_backend.mapper.UserMapper;
 import com.cle.video_share_backend.mapper.VideoMapper;
 import com.cle.video_share_backend.pojo.Channel;
+import com.cle.video_share_backend.pojo.Like;
 import com.cle.video_share_backend.pojo.User;
 import com.cle.video_share_backend.pojo.Video;
+import com.cle.video_share_backend.service.LikeService;
+import com.cle.video_share_backend.service.RedisService;
 import com.cle.video_share_backend.service.VideoService;
 import com.cle.video_share_backend.utils.FfmpegUtil;
 import com.cle.video_share_backend.utils.MinioUtil;
 import com.cle.video_share_backend.utils.UserThreadLocal;
+import com.cle.video_share_backend.vo.LikeVo;
 import com.cle.video_share_backend.vo.UserVo;
 import com.cle.video_share_backend.vo.VideoVo;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +43,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     private MinioProperties minioProperties;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private LikeService likeService;
 
     @Override
     public void uploadVideo(VideoVo videoVo) {
@@ -79,6 +88,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             video.setUserId(user.getId());
             video.setUserName(user.getName());
             this.save(video);
+            redisService.videoCountInit(video.getId());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -127,14 +137,36 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Override
     public VideoVo getVideo(Long id) {
-
+        //观看数+1
+        redisService.videoCountIncrease(id,1, RedisConstant.PLAY_COUNT);
+        //获取视频信息
         Video video = this.getById(id);
         VideoVo videoVo = new VideoVo();
+        //获取创作者信息
         User user = userMapper.selectById(video.getUserId());
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(user,userVo);
         BeanUtils.copyProperties(video,videoVo);
         videoVo.setUserVo(userVo);
+        //获取登录用户点赞信息
+        User loginUser = UserThreadLocal.get();
+        //先去数据库查
+        Like like = likeService.getById(loginUser.getId());
+        //再去redis查
+        Boolean islike = redisService.getLikeFromRedis(id, loginUser.getId());
+        LikeVo likeVo = new LikeVo();
+        //如果redis不存在
+        if(islike==null){
+            //如果数据库不存在
+            if(like==null){
+                likeVo.setLike(false);
+            }else {
+                likeVo.setLike(like.getLike());
+            }
+        }else {
+            likeVo.setLike(islike);
+        }
+        videoVo.setLikeVo(likeVo);
         return videoVo;
     }
 }
