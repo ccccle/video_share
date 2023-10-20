@@ -3,12 +3,14 @@ package com.cle.video_share_backend.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cle.video_share_backend.common.RedisConstant;
+import com.cle.video_share_backend.config.MinioProperties;
 import com.cle.video_share_backend.exception.ServiceException;
 import com.cle.video_share_backend.mapper.UserMapper;
 import com.cle.video_share_backend.pojo.User;
 import com.cle.video_share_backend.service.EmailService;
 import com.cle.video_share_backend.service.UserService;
 import com.cle.video_share_backend.utils.JWTUtils;
+import com.cle.video_share_backend.utils.MinioUtil;
 import com.cle.video_share_backend.utils.RedisUtils;
 import com.cle.video_share_backend.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -27,7 +31,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RedisUtils redisUtils;
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private MinioProperties minioProperties;
     @Override
     public void sendCode(String email) {
         //发送邮件
@@ -72,4 +77,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userVo;
 
     }
+
+    @Override
+    public void updateUserInfo(UserVo userVo) {
+        User user = new User();
+        //上传图片
+        if(userVo.getAvatarData()!=null){
+        LocalDateTime now = LocalDateTime.now();
+
+        String fileName= "/"+now.getYear()+"/"+now.getMonth().getValue()+"/"+now.getDayOfMonth()+"/"+UUID.randomUUID()+".png";
+        try {
+            MinioUtil.uploadFile(minioProperties.getBucket(),fileName,userVo.getAvatarData());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String avatarUrl = minioProperties.getEndpoint()+"/"+minioProperties.getBucket()+fileName;
+        user.setAvatar(avatarUrl);
+        }
+        BeanUtils.copyProperties(userVo,user,new String[]{"avatar"});
+        this.updateById(user);
+    }
+
 }

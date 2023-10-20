@@ -6,6 +6,7 @@ import com.cle.video_share_backend.service.UserService;
 import com.cle.video_share_backend.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -31,4 +32,15 @@ public class UserController {
         return ResponseResult.success(1,"获取成功",userInfo);
     }
 
+    @PutMapping("/updateUserInfo")
+    public ResponseResult updateUserInfo(@RequestPart(value = "avatar_data",required = false) MultipartFile avatarData,
+                                         @RequestParam("id") Long id,
+                                         @RequestParam(value = "name",required = false) String name) {
+        UserVo userVo = new UserVo();
+        userVo.setId(id);
+        userVo.setName(name);
+        userVo.setAvatarData(avatarData);
+        userService.updateUserInfo(userVo);
+        return ResponseResult.success();
+    }
 }

@@ -13,4 +13,6 @@ public interface UserService extends IService<User> {
 UserVo login(UserVo userVo) throws ServiceException;
 //获取个人信息
     UserVo getUserInfo(Long id);
+
+    void updateUserInfo(UserVo userVo);
 }
