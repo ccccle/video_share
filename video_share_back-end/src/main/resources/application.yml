@@ -6,7 +6,7 @@ spring:
     password: 12345678
   data:
     redis:
-      host: 192.168.200.130
+      host: 10.16.20.4
       port: 6379
       timeout: 6000
       password: 123
@@ -20,7 +20,7 @@ spring:
       max-file-size: 200MB
       max-request-size: 200MB
 minio:
-  endpoint: http://192.168.200.130:9000
+  endpoint: http://10.16.20.4:9000
   accessKey: cle
   secretKey: 98735521
   bucket: video-share

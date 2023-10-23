@@ -13,6 +13,8 @@ public class Fan {
     private Long userId;
     @TableField("fan_id")
     private Long fanId;
+    @TableField("status")
+    private Short status;
     @TableField(value = "create_time",fill = FieldFill.INSERT)
     private LocalDateTime createTime;
     @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)

@@ -6,18 +6,18 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cle.video_share_backend.common.RedisConstant;
 import com.cle.video_share_backend.config.MinioProperties;
 import com.cle.video_share_backend.mapper.ChannelMapper;
+import com.cle.video_share_backend.mapper.FanMapper;
 import com.cle.video_share_backend.mapper.UserMapper;
 import com.cle.video_share_backend.mapper.VideoMapper;
-import com.cle.video_share_backend.pojo.Channel;
-import com.cle.video_share_backend.pojo.Like;
-import com.cle.video_share_backend.pojo.User;
-import com.cle.video_share_backend.pojo.Video;
+import com.cle.video_share_backend.pojo.*;
+import com.cle.video_share_backend.service.FanService;
 import com.cle.video_share_backend.service.LikeService;
 import com.cle.video_share_backend.service.RedisService;
 import com.cle.video_share_backend.service.VideoService;
 import com.cle.video_share_backend.utils.FfmpegUtil;
 import com.cle.video_share_backend.utils.MinioUtil;
 import com.cle.video_share_backend.utils.UserThreadLocal;
+import com.cle.video_share_backend.vo.FanVo;
 import com.cle.video_share_backend.vo.LikeVo;
 import com.cle.video_share_backend.vo.UserVo;
 import com.cle.video_share_backend.vo.VideoVo;
@@ -47,7 +47,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     private RedisService redisService;
     @Autowired
     private LikeService likeService;
-
+    @Autowired
+    private FanMapper fanMapper;
     @Override
     public void uploadVideo(VideoVo videoVo) {
         String minioBaseUrl = minioProperties.getEndpoint() + "/" + minioProperties.getBucket();
@@ -147,7 +148,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(user,userVo);
         BeanUtils.copyProperties(video,videoVo);
-        videoVo.setUserVo(userVo);
         //获取登录用户点赞信息
         User loginUser = UserThreadLocal.get();
         //先去数据库查
@@ -167,6 +167,17 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             likeVo.setLike(islike);
         }
         videoVo.setLikeVo(likeVo);
+        //获取对作者的关注信息
+        LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        fanLambdaQueryWrapper.eq(Fan::getUserId,loginUser.getId());
+        fanLambdaQueryWrapper.eq(Fan::getFanId,video.getUserId());
+        Fan fan = fanMapper.selectOne(fanLambdaQueryWrapper);
+        if(fan!=null){
+            FanVo fanVo = new FanVo();
+            BeanUtils.copyProperties(fan,fanVo);
+            userVo.setFanVo(fanVo);
+        }
+        videoVo.setUserVo(userVo);
         return videoVo;
     }
 }

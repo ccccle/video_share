@@ -14,4 +14,6 @@ public class UserVo {
     private String avatar;
     private String code;
     private String token;
+    @JsonProperty("fan")
+    private FanVo fanVo;
 }

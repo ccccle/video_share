@@ -2,11 +2,13 @@ package com.cle.video_share_backend.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cle.video_share_backend.common.RedisConstant;
 import com.cle.video_share_backend.mapper.CommentMapper;
 import com.cle.video_share_backend.mapper.UserMapper;
 import com.cle.video_share_backend.pojo.Comment;
 import com.cle.video_share_backend.pojo.User;
 import com.cle.video_share_backend.service.CommentService;
+import com.cle.video_share_backend.service.RedisService;
 import com.cle.video_share_backend.utils.UserThreadLocal;
 import com.cle.video_share_backend.vo.CommentVo;
 import com.cle.video_share_backend.vo.UserVo;
@@ -26,12 +28,16 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
    @Autowired
    private UserMapper userMapper;
+   @Autowired
+   private RedisService redisService;
     @Override
     public void sendComment(CommentVo commentVo) {
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentVo,comment);
         User user = UserThreadLocal.get();
         comment.setCommentUserId(user.getId());
+        //评论数+1
+        redisService.videoCountIncrease(commentVo.getVideoId(),1, RedisConstant.COMMENT_COUNT);
         this.save(comment);
     }
 
