@@ -8,4 +8,5 @@ import pinia from '@/stores/index'
 const app = createApp(App).component('SvgIcon', SvgIcon)
 app.use(router)
 app.use(pinia.use(piniaPluginPersistedstate))
+
 app.mount('#app')

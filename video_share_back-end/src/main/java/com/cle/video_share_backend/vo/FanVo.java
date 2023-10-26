@@ -17,4 +17,8 @@ public class FanVo {
     private LocalDateTime createTime;
     @JsonProperty("update_time")
     private LocalDateTime updateTime;
+    @JsonProperty("user")
+    private UserVo userVo;
+    @JsonProperty("fan")
+    private UserVo fanUserVo;
 }

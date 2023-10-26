@@ -10,7 +10,6 @@ import com.cle.video_share_backend.mapper.FanMapper;
 import com.cle.video_share_backend.mapper.UserMapper;
 import com.cle.video_share_backend.mapper.VideoMapper;
 import com.cle.video_share_backend.pojo.*;
-import com.cle.video_share_backend.service.FanService;
 import com.cle.video_share_backend.service.LikeService;
 import com.cle.video_share_backend.service.RedisService;
 import com.cle.video_share_backend.service.VideoService;
@@ -59,7 +58,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         video.setChannelName(channel.getChannelName());
         MultipartFile videoData = videoVo.getVideoData();
         String mp4 = null;
-        String pngName = null;
+        String png = null;
         try {
             InputStream inputStream = videoData.getResource().getInputStream();
             //把所有的格式都转为MP4
@@ -69,8 +68,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             String mp4Name = "/" + now.getYear() + "/" + now.getMonth().getValue() + "/" + now.getDayOfMonth() + "/" + UUID.randomUUID() + ".MP4";
             //minio上传文件
             MinioUtil.uploadFile(minioProperties.getBucket(), mp4Name, mp4);
+             png = UUID.randomUUID() + ".png";
             //如果不存在视频封面
-            pngName = "/" + now.getYear() + "/" + now.getMonth().getValue() + "/" + now.getDayOfMonth() + "/" + UUID.randomUUID() + ".png";
+            String pngName = "/" + now.getYear() + "/" + now.getMonth().getValue() + "/" + now.getDayOfMonth() + "/" + png;
             if (videoVo.getVideoCover() == null) {
                 //抓取视频内容第一帧作为封面
                 String firstFramePng = FfmpegUtil.getFirstFrame(mp4);
@@ -96,7 +96,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             File mp4File = new File(mp4);
             //删除临时文件
             mp4File.delete();
-            File pngNameFile = new File(pngName);
+            File pngNameFile = new File(png);
             //删除临时文件
             pngNameFile.delete();
         }
@@ -106,15 +106,18 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
-    public Page<VideoVo> feed(Integer size, Integer page, String key) {
-        Page<Video> pageVideo = new Page<>(page, size);
+    public Page<VideoVo> feed(Integer size, Integer page, String key, Long channelId) {
+        Page<Video> pageVideo = new Page<>(size, page);
         LambdaQueryWrapper<Video> like = new LambdaQueryWrapper<Video>();
         //根据key模糊查询视频名
         if (key != null) {
             like.like(Video::getVideoName, key);
         }
-        Page<Video> videoPage = this.page(pageVideo, like);
-        List<Video> list = videoPage.getRecords();
+        if(channelId !=null){
+            like.like(Video::getChannelId, channelId);
+        }
+        this.page(pageVideo, like);
+        List<Video> list = pageVideo.getRecords();
         //把videolist转为videovolist
         List<VideoVo> videoVoList = list.stream().map(video -> {
             VideoVo videoVo = new VideoVo();
@@ -130,7 +133,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             return videoVo;
         }).collect(Collectors.toList());
         Page<VideoVo> videoVoPage = new Page<VideoVo>();
-        BeanUtils.copyProperties(videoPage, videoVoPage);
+        BeanUtils.copyProperties(pageVideo, videoVoPage);
         videoVoPage.setRecords(videoVoList);
         return videoVoPage;
 
@@ -142,6 +145,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         redisService.videoCountIncrease(id,1, RedisConstant.PLAY_COUNT);
         //获取视频信息
         Video video = this.getById(id);
+        VideoVo videoVo = getVideoVoByVideo(video);
+        return videoVo;
+    }
+    public VideoVo getVideoVoByVideo(Video video){
         VideoVo videoVo = new VideoVo();
         //获取创作者信息
         User user = userMapper.selectById(video.getUserId());
@@ -153,7 +160,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         //先去数据库查
         Like like = likeService.getById(loginUser.getId());
         //再去redis查
-        Boolean islike = redisService.getLikeFromRedis(id, loginUser.getId());
+        Boolean islike = redisService.getLikeFromRedis(video.getId(), loginUser.getId());
         LikeVo likeVo = new LikeVo();
         //如果redis不存在
         if(islike==null){
@@ -166,6 +173,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         }else {
             likeVo.setLike(islike);
         }
+        videoVo.setVideoCoverUrl(video.getVideoCover());
         videoVo.setLikeVo(likeVo);
         //获取对作者的关注信息
         LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -179,5 +187,25 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         }
         videoVo.setUserVo(userVo);
         return videoVo;
+    }
+    @Override
+    public Page<VideoVo> getVideoByUserId(Integer page, Integer size, Long userId) {
+        Page<Video> videoPage = new Page<>(size,page);
+        LambdaQueryWrapper<Video> videoLambdaQueryWrapper = new LambdaQueryWrapper<Video>().eq(Video::getUserId, userId);
+        this.page(videoPage, videoLambdaQueryWrapper);
+        List<Video> videoList = videoPage.getRecords();
+        List<VideoVo> videoVoList = videoList.stream().map(video -> {
+            VideoVo videoVo = getVideoVoByVideo(video);
+            return videoVo;
+        }).collect(Collectors.toList());
+        Page<VideoVo> videoVoPage = new Page<>();
+        BeanUtils.copyProperties(videoPage,videoVoPage);
+        videoVoPage.setRecords(videoVoList);
+        return videoVoPage;
+    }
+
+    @Override
+    public void delVideo(Long id) {
+        this.removeById(id);
     }
 }

@@ -13,6 +13,26 @@ const router = createRouter({
           path: '/home',
           name: 'home',
           component: () => import('@/views/home/Home.vue')
+        },
+        {
+          path: '/userInfo',
+          name: 'userInfo',
+          component: () => import('@/views/userInfo/userInfo.vue'),
+          redirect: '/userInfo/video',
+          children: [
+            {
+              path: '/userInfo/video',
+              component: () => import('@/views/userInfo/video/Video.vue')
+            },
+            {
+              path: '/userInfo/follow',
+              component: () => import('@/views/userInfo/action/Action.vue')
+            },
+            {
+              path: '/userInfo/fan',
+              component: () => import('@/views/userInfo/action/Action.vue')
+            }
+          ]
         }
       ]
     },
@@ -32,6 +52,11 @@ const router = createRouter({
           name: 'person',
           component: () =>
             import('@/views/publish/personalCenter/personalCenter.vue')
+        },
+        {
+          path: '/publish/videoManage',
+          name: 'videoManage',
+          component: () => import('@/views/publish/videoManage/VideoManage.vue')
         }
       ]
     },

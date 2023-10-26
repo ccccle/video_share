@@ -23,3 +23,7 @@ body {
 .dialog{
   --el-dialog-border-radius:30px
 }
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}

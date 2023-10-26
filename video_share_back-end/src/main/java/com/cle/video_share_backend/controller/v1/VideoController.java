@@ -34,8 +34,8 @@ public class VideoController {
     }
     //推荐的视频流
     @GetMapping("/feed")
-    public ResponseResult feed(Integer size,Integer page,String key){
-        Page<VideoVo> userVoList =  videoService.feed(size,page,key);
+    public ResponseResult feed(Integer page,Integer size,String key,@RequestParam(value = "channel_id",required = false ) Long channelId){
+        Page<VideoVo> userVoList =  videoService.feed(page,size,key,channelId);
         return ResponseResult.success(userVoList);
     }
     //获取具体视频信息
@@ -43,5 +43,21 @@ public class VideoController {
     public ResponseResult getVideo(Long id){
        VideoVo videoVo = videoService.getVideo(id);
        return ResponseResult.success(videoVo);
+    }
+
+    /**
+     * 获取用户上传的视频
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getUserVideo")
+    public ResponseResult getUserVideo(Integer size,Integer page, @RequestParam("user_id") Long userId){
+       Page<VideoVo> videoVoList= videoService.getVideoByUserId(size,page,userId);
+       return ResponseResult.success(videoVoList);
+    }
+    @DeleteMapping("/delVideo")
+    public ResponseResult delVideo( Long id){
+        videoService.delVideo(id);
+        return ResponseResult.success();
     }
 }
