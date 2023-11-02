@@ -1,7 +1,7 @@
 package com.cle.video_share_backend.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cle.video_share_backend.mapper.FanMapper;
 import com.cle.video_share_backend.mapper.UserMapper;
@@ -45,9 +45,51 @@ public class FanSerivceImpl extends ServiceImpl<FanMapper, Fan> implements FanSe
     }
 
     @Override
-    public List<FanVo> getFollow(Long userId) {
+    public Page<FanVo> getFollow(Integer page, Integer size, Long userId, String type) {
+        Page<Fan> fanPage = new Page<>(page,size);
         LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        fanLambdaQueryWrapper.eq(Fan::getUserId,userId);
+
+        if("follow".equals(type)){
+            //查userId关注的
+            fanLambdaQueryWrapper.eq(Fan::getUserId,userId);
+        }else {
+            //查关注userId的
+            fanLambdaQueryWrapper.eq(Fan::getFanId,userId);
+        }
+
+        fanLambdaQueryWrapper.eq(Fan::getStatus,1);
+         this.page(fanPage,fanLambdaQueryWrapper);
+        List<Fan> list = fanPage.getRecords();
+        List<FanVo> collect = list.stream().map(item -> {
+            FanVo fanVo = new FanVo();
+            BeanUtils.copyProperties(item, fanVo);
+            User user = userMapper.selectById(item.getUserId());
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(user,userVo);
+            User fan = userMapper.selectById(item.getFanId());
+            UserVo fanUserVo = new UserVo();
+            BeanUtils.copyProperties(fan,fanUserVo);
+            fanVo.setFanUserVo(fanUserVo);
+            fanVo.setUserVo(userVo);
+            return fanVo;
+        }).collect(Collectors.toList());
+        Page<FanVo> fanVoPage = new Page<>();
+        BeanUtils.copyProperties(fanPage,fanVoPage);
+        fanVoPage.setRecords(collect);
+        return fanVoPage;
+    }
+
+    @Override
+    public List<FanVo> getFollow(Long userId, String type) {
+        LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if("follow".equals(type)){
+            //查userId关注的
+            fanLambdaQueryWrapper.eq(Fan::getUserId,userId);
+        }else {
+            //查关注userId的
+            fanLambdaQueryWrapper.eq(Fan::getFanId,userId);
+        }
+        fanLambdaQueryWrapper.eq(Fan::getStatus,1);
         List<Fan> list = this.list(fanLambdaQueryWrapper);
         List<FanVo> collect = list.stream().map(item -> {
             FanVo fanVo = new FanVo();
@@ -63,6 +105,20 @@ public class FanSerivceImpl extends ServiceImpl<FanMapper, Fan> implements FanSe
             return fanVo;
         }).collect(Collectors.toList());
         return collect;
-
     }
+
+    @Override
+    public long getCount(Long userId, String type) {
+        LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        fanLambdaQueryWrapper.eq(Fan::getStatus,1);
+        if("follow".equals(type))
+        {
+            fanLambdaQueryWrapper.eq(Fan::getUserId,userId);
+        }else {
+            fanLambdaQueryWrapper.eq(Fan::getFanId,userId);
+        }
+        long count = this.count(fanLambdaQueryWrapper);
+        return count;
+    }
+
 }

@@ -128,8 +128,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user, userVo);
             videoVo.setUserVo(userVo);
-            System.out.println(video);
-            System.out.println(videoVo);
             return videoVo;
         }).collect(Collectors.toList());
         Page<VideoVo> videoVoPage = new Page<VideoVo>();

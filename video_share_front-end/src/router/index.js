@@ -10,6 +10,11 @@ const router = createRouter({
       redirect: '/home',
       children: [
         {
+          path: '/notice',
+          name: 'notice',
+          component: () => import('@/views/notice/Notice.vue')
+        },
+        {
           path: '/home',
           name: 'home',
           component: () => import('@/views/home/Home.vue')
@@ -26,11 +31,11 @@ const router = createRouter({
             },
             {
               path: '/userInfo/follow',
-              component: () => import('@/views/userInfo/action/Action.vue')
+              component: () => import('@/views/userInfo/action/Follow.vue')
             },
             {
               path: '/userInfo/fan',
-              component: () => import('@/views/userInfo/action/Action.vue')
+              component: () => import('@/views/userInfo/action/Fan.vue')
             }
           ]
         }

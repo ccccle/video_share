@@ -22,7 +22,7 @@ public class Scheduling {
     /**
      * 定时从redis里面获取点赞数据同步到数据库
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void saveLikeFormRedisToDB() {
         List<Like> likeList = redisService.getLikeListFromRedis();
         //同步到数据库
@@ -33,7 +33,7 @@ public class Scheduling {
     /**
      * 定时从redis里面获取视频统计同步到数据库
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void saveVideoCountFormRedisToDB() {
         List<Video> videoList = redisService.getVideoCount();
         //同步到数据库
