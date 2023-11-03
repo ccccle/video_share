@@ -7,32 +7,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/barrage")
 public class BarrageController {
     @GetMapping("/get/v3/")
-    public String get(String id){
+    public ResponseResult get(String id){
+        List<Object> list = new ArrayList<>();
+        Barrage barrage = new Barrage();
+        barrage.setTime(1.188);
+        barrage.setText("好家伙，我直接好家伙");
+        barrage.setAuthor("小明");
+        barrage.setType("0");
+        barrage.setColor("16777215");
 
-        return "{\n" +
-                "\t\"code\": 0,\n" +
-                "\t\"data\":"+
-                "[\n" +
-                "  {\n" +
-                "    \"time\": 0.5,\n" +
-                "    \"mode\": 1,\n" +
-                "    \"color\": 16777215,\n" +
-                "    \"text\": \"这是一条弹幕1\",\n" +
-                "    \"author\": \"用户A\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"time\": 3.0,\n" +
-                "    \"mode\": 0,\n" +
-                "    \"color\": 16711680,\n" +
-                "    \"text\": \"这是一条弹幕2\",\n" +
-                "    \"author\": \"用户B\"\n" +
-                "  }\n" +
-                "]\n"+
-                "}";
+        List<Object> list2 = new ArrayList<>();
+        list2.add(barrage.getTime());
+        list2.add(barrage.getType());
+        list2.add(barrage.getColor());
+        list2.add(barrage.getAuthor());
+        list2.add(barrage.getText());
+        list.add(list2);
+        return ResponseResult.success(0,"成功",list);
 
     }
 }
