@@ -4,6 +4,7 @@
 
 <script setup>
 import DPlayer from 'dplayer'
+
 import { ref, onBeforeUnmount, onMounted } from 'vue'
 
 const videoRef = ref()
@@ -65,12 +66,10 @@ const props = defineProps({
   // 视频信息
   video: {
     type: Object,
-    default: () => {
-      return {
-        url: '', //视频地址
-        type: 'mp4',
-        customType: {}
-      }
+    default: {
+      url: '', //视频地址
+      type: 'mp4',
+      customType: {}
     }
   },
   // 外挂字幕
@@ -91,7 +90,7 @@ const props = defineProps({
   // 自定义进度条提示点
   highlight: {
     type: Array,
-    default: ()=>[]
+    default: []
   },
   // 阻止多个播放器同时播放，当前播放器播放时暂停其他播放器
   mutex: {
@@ -125,6 +124,7 @@ onMounted(() => {
   }
 
   state.value.instance = new DPlayer(player)
+  console.log(state.value)
 })
 // 销毁
 onBeforeUnmount(() => {
@@ -132,4 +132,18 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+:deep(.dplayer-danmaku .dplayer-danmaku-right.dplayer-danmaku-move) {
+  /* transition: all 10s; */
+  /* transform: translateX(100px) !important; */
+  animation: move 120s ease-in-out;
+}
+@keyframes move {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-1960px);
+  }
+}
+</style>

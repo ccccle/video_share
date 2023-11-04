@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import '@/assets/main.css'
+import '@/assets/danmuku.scss'
 import App from './App.vue'
 import router from './router'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'

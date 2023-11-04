@@ -20,6 +20,7 @@ const getVideo = async () => {
   const res = await videoGetService(route.query.id)
   video.value = res.data.data
   dplayerObj.value.video.url = video.value.video_url
+
   like.value = video.value.like
   if (video.value.user.fan) fan.value = video.value.user.fan
   if (like.value.like) {
@@ -81,8 +82,6 @@ const reply = ref({
 })
 const onReply = (first, second) => {
   first.displayReply = true
-  console.log(first)
-  console.log(second)
   reply.value.video_id = video.value.id
   reply.value.comment_id = first.id
   reply.value.to_user_id = first.comment_user_id
@@ -119,15 +118,15 @@ const dplayerObj = ref({
     type: 'mp4'
   },
   danmaku: {
-    id: 'BV1Na411r7tN', //视频
-    api: 'https://api.mdzz.pro/danmaku/server/entrance/',
-    // token: 'tokendemo',
+    id: route.query.id, //视频
+    api: 'http://localhost:8080/api/v1/barrage/',
+    // token: userStore.token,
     // maximum: 1000,//弹幕大数量
     // addition: ['http://localhost:8080/api/v1/barrage/get'],
-    // user: 'DIYgod',
+    user: '',
     // bottom: '15%',
     unlimited: true,
-    speedRate: 0.5
+    speedRate: 0.5,
   }
 })
 </script>
