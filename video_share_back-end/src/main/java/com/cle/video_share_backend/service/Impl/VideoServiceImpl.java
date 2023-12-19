@@ -155,34 +155,36 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         BeanUtils.copyProperties(video,videoVo);
         //获取登录用户点赞信息
         User loginUser = UserThreadLocal.get();
-        //先去数据库查
-        Like like = likeService.getById(loginUser.getId());
-        //再去redis查
-        Boolean islike = redisService.getLikeFromRedis(video.getId(), loginUser.getId());
-        LikeVo likeVo = new LikeVo();
-        //如果redis不存在
-        if(islike==null){
-            //如果数据库不存在
-            if(like==null){
-                likeVo.setLike(false);
+        if(loginUser!=null){
+            //先去数据库查
+            Like like = likeService.getById(loginUser.getId());
+            //再去redis查
+            Boolean islike = redisService.getLikeFromRedis(video.getId(), loginUser.getId());
+            LikeVo likeVo = new LikeVo();
+            //如果redis不存在
+            if(islike==null){
+                //如果数据库不存在
+                if(like==null){
+                    likeVo.setLike(false);
+                }else {
+                    likeVo.setLike(like.getLike());
+                }
             }else {
-                likeVo.setLike(like.getLike());
+                likeVo.setLike(islike);
             }
-        }else {
-            likeVo.setLike(islike);
+            videoVo.setLikeVo(likeVo);
+            //获取对作者的关注信息
+            LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            fanLambdaQueryWrapper.eq(Fan::getUserId,loginUser.getId());
+            fanLambdaQueryWrapper.eq(Fan::getFanId,video.getUserId());
+            Fan fan = fanMapper.selectOne(fanLambdaQueryWrapper);
+            if(fan!=null){
+                FanVo fanVo = new FanVo();
+                BeanUtils.copyProperties(fan,fanVo);
+                userVo.setFanVo(fanVo);
+            }
         }
         videoVo.setVideoCoverUrl(video.getVideoCover());
-        videoVo.setLikeVo(likeVo);
-        //获取对作者的关注信息
-        LambdaQueryWrapper<Fan> fanLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        fanLambdaQueryWrapper.eq(Fan::getUserId,loginUser.getId());
-        fanLambdaQueryWrapper.eq(Fan::getFanId,video.getUserId());
-        Fan fan = fanMapper.selectOne(fanLambdaQueryWrapper);
-        if(fan!=null){
-            FanVo fanVo = new FanVo();
-            BeanUtils.copyProperties(fan,fanVo);
-            userVo.setFanVo(fanVo);
-        }
         videoVo.setUserVo(userVo);
         return videoVo;
     }
@@ -205,5 +207,21 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     public void delVideo(Long id) {
         this.removeById(id);
+    }
+
+    @Override
+    public Page<VideoVo> getVideoList(Integer page, Integer size) {
+        Page<Video> videoPage = new Page<>(size,page);
+        this.page(videoPage);
+        List<Video> videoList = videoPage.getRecords();
+        List<VideoVo> videoVoList = videoList.stream().map(video -> {
+            VideoVo videoVo = getVideoVoByVideo(video);
+            return videoVo;
+        }).collect(Collectors.toList());
+        Page<VideoVo> videoVoPage = new Page<>();
+        BeanUtils.copyProperties(videoPage,videoVoPage);
+        videoVoPage.setRecords(videoVoList);
+        return videoVoPage;
+
     }
 }

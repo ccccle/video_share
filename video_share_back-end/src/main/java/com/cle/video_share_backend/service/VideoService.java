@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cle.video_share_backend.pojo.Video;
 import com.cle.video_share_backend.vo.VideoVo;
+import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public interface VideoService extends IService<Video> {
     //上传视频
@@ -12,7 +14,6 @@ public interface VideoService extends IService<Video> {
     Page<VideoVo> feed(Integer size, Integer page, String key, Long channelId);
     //获取详细视频信息
     VideoVo getVideo(Long id);
-
     /**
      * 获取用户上传的视频
      *
@@ -29,4 +30,6 @@ public interface VideoService extends IService<Video> {
      * @param id
      */
     void delVideo(Long id);
+
+    Page<VideoVo> getVideoList(Integer size, Integer page);
 }

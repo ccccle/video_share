@@ -11,7 +11,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TokenInterceptor())
-                .addPathPatterns("/**");//拦截所有的路径
-//                .excludePathPatterns("/LoginController/login");
+                .addPathPatterns("/**")//拦截所有的路径
+                .excludePathPatterns("/api/v1/user/sendCode")
+                .excludePathPatterns("/api/v1/user/login");
+
     }
 }

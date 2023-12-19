@@ -71,9 +71,22 @@ const router = createRouter({
       component: () => import('@/views/videoDetail/videoDetail.vue')
     },
     {
-      path: '/dplayer',
-      name: 'dplayer',
-      component: () => import('@/components/DPlayer.vue')
+      path: '/back',
+      name: 'back',
+      redirect: '/back/videoBack',
+      component: () => import('@/views/backend/Home.vue'),
+      children: [
+        {
+          path: '/back/videoBack',
+          name: 'videoBack',
+          component: () => import('@/views/backend/video/videoManage.vue')
+        },
+        {
+          path: '/back/userBack',
+          name: 'userBack',
+          component: () => import('@/views/backend/user/userBack.vue')
+        }
+      ]
     }
   ]
 })

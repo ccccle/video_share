@@ -1,5 +1,5 @@
 <script setup>
-import { House, Bell, Position } from '@element-plus/icons-vue'
+import { House, Position } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/index.js'
 import Header from '@/components/Header.vue'
@@ -34,11 +34,6 @@ const quitLogin = () => {
             <el-icon class="icon-style"><Position /></el-icon>
             <span>发布</span>
           </el-menu-item>
-          <el-menu-item @click="router.push('/notice')">
-            <el-icon class="icon-style"><Bell /></el-icon>
-            <span>通知</span>
-          </el-menu-item>
-
           <el-menu-item
             @click="
               router.push({

@@ -51,8 +51,14 @@ public class VideoController {
      * @return
      */
     @GetMapping("/getUserVideo")
-    public ResponseResult getUserVideo(Integer size,Integer page, @RequestParam("user_id") Long userId){
-       Page<VideoVo> videoVoList= videoService.getVideoByUserId(size,page,userId);
+    public ResponseResult getUserVideo(Integer size,Integer page, @RequestParam(value = "user_id",required = false) Long userId){
+        Page<VideoVo> videoVoList =null;
+        if(userId==null){
+            //获取所有视频
+             videoVoList= videoService.getVideoList(size,page);
+        }else {
+        videoVoList= videoService.getVideoByUserId(size,page,userId);
+        }
        return ResponseResult.success(videoVoList);
     }
     @DeleteMapping("/delVideo")
