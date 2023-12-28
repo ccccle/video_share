@@ -1,5 +1,6 @@
 package com.cle.video_share_backend.controller.v1;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cle.video_share_backend.common.ResponseResult;
 import com.cle.video_share_backend.exception.ServiceException;
 import com.cle.video_share_backend.service.UserService;
@@ -41,6 +42,17 @@ public class UserController {
         userVo.setName(name);
         userVo.setAvatarData(avatarData);
         userService.updateUserInfo(userVo);
+        return ResponseResult.success();
+    }
+    //分页查询用户信息
+    @GetMapping ("/page")
+    public ResponseResult page(Integer page,Integer size) {
+        IPage<UserVo> userVoIPage = userService.pageList(page, size);
+        return ResponseResult.success(userVoIPage);
+    }
+    @DeleteMapping("/del")
+    public ResponseResult del(Long id){
+        userService.removeById(id);
         return ResponseResult.success();
     }
 }

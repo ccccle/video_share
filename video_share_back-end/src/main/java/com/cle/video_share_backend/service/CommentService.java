@@ -1,5 +1,6 @@
 package com.cle.video_share_backend.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cle.video_share_backend.pojo.Comment;
 import com.cle.video_share_backend.vo.CommentVo;
@@ -19,4 +20,6 @@ public interface CommentService extends IService<Comment> {
      * @return
      */
     List<CommentVo> getComment(Long videoId);
+
+    IPage<Comment> pageList(Integer page, Integer size, Long videoId);
 }

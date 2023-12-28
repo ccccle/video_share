@@ -126,7 +126,7 @@ const dplayerObj = ref({
     user: '',
     // bottom: '15%',
     unlimited: true,
-    speedRate: 0.5,
+    speedRate: 0.5
   }
 })
 </script>

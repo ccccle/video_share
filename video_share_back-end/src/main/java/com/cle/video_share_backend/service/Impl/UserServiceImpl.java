@@ -1,6 +1,8 @@
 package com.cle.video_share_backend.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cle.video_share_backend.common.RedisConstant;
 import com.cle.video_share_backend.config.MinioProperties;
@@ -20,7 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -96,6 +100,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         BeanUtils.copyProperties(userVo,user,new String[]{"avatar"});
         this.updateById(user);
+    }
+
+    @Override
+    public IPage<UserVo> pageList(Integer page, Integer size) {
+        IPage<User> userIPage = new Page<>(page,size);
+        this.page(userIPage);
+        List<User> records = userIPage.getRecords();
+        List<UserVo> collect = records.stream().map(user -> {
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(user, userVo);
+            return userVo;
+        }).collect(Collectors.toList());
+        IPage<UserVo> userVoIPage = new Page<>();
+        BeanUtils.copyProperties(userIPage,userVoIPage);
+        userVoIPage.setRecords(collect);
+        return userVoIPage;
     }
 
 }

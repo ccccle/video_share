@@ -1,5 +1,6 @@
 package com.cle.video_share_backend.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cle.video_share_backend.exception.ServiceException;
 import com.cle.video_share_backend.pojo.User;
@@ -15,4 +16,6 @@ UserVo login(UserVo userVo) throws ServiceException;
     UserVo getUserInfo(Long id);
 
     void updateUserInfo(UserVo userVo);
+
+    IPage<UserVo> pageList(Integer page, Integer size);
 }

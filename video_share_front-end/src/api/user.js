@@ -11,7 +11,6 @@ export const userLoginService = ({ email, code }) => {
 }
 //更改用户信息
 export const userUpdateService = (user) => {
-  console.log(user)
   var formData = new FormData()
   for (let key in user) {
     formData.append(key, user[key])
@@ -25,6 +24,21 @@ export const userUpdateService = (user) => {
 //获取个人用户信息
 export const userGetInfoService = (id) => {
   return request.get('/api/v1/user/getUserInfo', {
+    params: { id }
+  })
+}
+//分页获取用户信息
+export const userGetPage = (page, size) => {
+  return request.get('/api/v1/user/page', {
+    params: {
+      page,
+      size
+    }
+  })
+}
+//删除用户信息
+export const userDel = (id) => {
+  return request.delete('/api/v1/user/del', {
     params: { id }
   })
 }

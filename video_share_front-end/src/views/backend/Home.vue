@@ -18,7 +18,7 @@ const router = useRouter()
                 <SvgIcon name="manuscript"></SvgIcon> 视频管理</span
               >
             </el-menu-item>
-            <el-menu-item @click="router.push('/publish/person')">
+            <el-menu-item @click="router.push('/back/userBack')">
               <span class="menu-item"
                 ><SvgIcon name="person"></SvgIcon> 用户管理</span
               >

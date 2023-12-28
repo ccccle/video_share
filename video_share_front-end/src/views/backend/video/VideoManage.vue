@@ -1,13 +1,13 @@
 <script setup>
 import { videoUserService } from '@/api/video.js'
-import { useUserStore } from '@/stores/index.js'
 import { ref } from 'vue'
 import { videoDelSerivce } from '@/api/video.js'
 import { useRouter } from 'vue-router'
 import BarrageManage from '@/views/backend/video/components/BarrageManage.vue'
+import CommentManage from './components/CommentManage.vue'
 const barrageManage = ref()
+const commentManage = ref()
 const router = useRouter()
-const userStore = useUserStore()
 const videoList = ref([])
 const pageParams = ref({
   currentPage: 1,
@@ -17,8 +17,7 @@ const pageParams = ref({
 const getVideoList = async () => {
   const res = await videoUserService(
     pageParams.value.currentPage,
-    pageParams.value.pageSize,
-    userStore.user.id
+    pageParams.value.pageSize
   )
   videoList.value = res.data.data.records
   pageParams.value.pages = parseInt(res.data.data.pages)
@@ -44,6 +43,10 @@ const toVideoDetail = (id) => {
 //打开弹幕弹窗
 const openBarrage = (id) => {
   barrageManage.value.openDialog(id)
+}
+//打开评论弹窗
+const openComment = (id) => {
+  commentManage.value.openDialog(id)
 }
 </script>
 <template>
@@ -92,7 +95,9 @@ const openBarrage = (id) => {
           <el-button @click="openBarrage(item.id)" type="primary"
             >弹幕列表</el-button
           >
-          <el-button @click="delVideo(item)" type="primary">评论列表</el-button>
+          <el-button @click="openComment(item.id)" type="primary"
+            >评论列表</el-button
+          >
           <el-button @click="delVideo(item)" type="danger">删除</el-button>
         </div>
       </div>
@@ -108,6 +113,7 @@ const openBarrage = (id) => {
       </div>
     </div>
     <BarrageManage ref="barrageManage"></BarrageManage>
+    <CommentManage ref="commentManage"></CommentManage>
   </div>
 </template>
 <style scoped>
@@ -131,6 +137,7 @@ const openBarrage = (id) => {
         display: flex;
         height: 20%;
         width: 20%;
+        aspect-ratio: 16 / 9;
         .cover-img {
         }
       }

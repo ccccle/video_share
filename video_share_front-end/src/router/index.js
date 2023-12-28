@@ -79,12 +79,12 @@ const router = createRouter({
         {
           path: '/back/videoBack',
           name: 'videoBack',
-          component: () => import('@/views/backend/video/videoManage.vue')
+          component: () => import('@/views/backend/video/VideoManage.vue')
         },
         {
           path: '/back/userBack',
           name: 'userBack',
-          component: () => import('@/views/backend/user/userBack.vue')
+          component: () => import('@/views/backend/user/UserManage.vue')
         }
       ]
     }

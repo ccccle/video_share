@@ -41,7 +41,7 @@ defineExpose({ openDialog })
   <el-drawer v-model="dialogVisible" direction="rtl" size="60%">
     <el-table :data="barrageList">
       <el-table-column type="index" label="序号" width="100" />
-      <el-table-column property="user_id" label="发送人" />
+      <el-table-column property="user_id" label="发送人id" />
       <el-table-column property="time" label="弹幕出现时间(秒)" width="150" />
       <el-table-column property="text" label="弹幕内容" width="200" />
       <el-table-column label="操作" width="200">

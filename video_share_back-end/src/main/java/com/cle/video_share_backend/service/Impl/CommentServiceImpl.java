@@ -1,6 +1,8 @@
 package com.cle.video_share_backend.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cle.video_share_backend.common.RedisConstant;
 import com.cle.video_share_backend.mapper.CommentMapper;
@@ -17,8 +19,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,6 +82,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             commentVo.setCommentVoList(collect);
         });
         return commentV1;
+    }
+
+    @Override
+    public IPage<Comment> pageList(Integer page, Integer size, Long videoId) {
+        IPage<Comment> commentIPage = new Page<>(page,size);
+        LambdaQueryWrapper<Comment> lambdaQueryWrapper = new LambdaQueryWrapper<Comment>().eq(Comment::getVideoId,videoId);
+        this.page(commentIPage,lambdaQueryWrapper);
+        return commentIPage;
     }
 
 

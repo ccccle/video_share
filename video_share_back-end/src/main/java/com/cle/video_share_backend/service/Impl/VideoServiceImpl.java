@@ -134,7 +134,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         BeanUtils.copyProperties(pageVideo, videoVoPage);
         videoVoPage.setRecords(videoVoList);
         return videoVoPage;
-
     }
 
     @Override
