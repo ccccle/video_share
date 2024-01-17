@@ -1,15 +1,25 @@
 <script setup>
 import dplayer from '@/components/DPlayer.vue'
 import Header from '../../components/Header.vue'
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { videoGetService } from '@/api/video.js'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { videoGetService, videoFeedService } from '@/api/video.js'
 import { likeLikeService } from '@/api/like.js'
 import { useUserStore } from '@/stores/index.js'
 import { commentSendService, commentGetService } from '@/api/comment.js'
 import { fanFollowService } from '@/api/fan.js'
 const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
+watch(
+  () => route.query.id, // 监听$route对象的变化
+  (to, from) => {
+    if (to !== from) {
+      window.location.reload()
+      // 刷新当前路由
+    }
+  }
+)
 //视频
 const video = ref({
   video_name: '',
@@ -109,8 +119,7 @@ const onFan = async () => {
   fan.value.status = fan.value.status === 0 ? 1 : 0
   await fanFollowService(fan.value)
 }
-getVideo()
-getCommentList()
+
 //视频配置
 const dplayerObj = ref({
   video: {
@@ -129,6 +138,34 @@ const dplayerObj = ref({
     speedRate: 0.5
   }
 })
+//推荐视频
+const commendVideoList = ref([])
+//获得推荐视频流
+const getCommendFeed = async () => {
+  const res = await videoFeedService(10, 1)
+  commendVideoList.value = res.data.data.records
+}
+//跳转视频详细
+const goVideoDetail = (id) => {
+  router.push({
+    path: '/videoDetail',
+    query: {
+      id
+    }
+  })
+}
+//跳转用户主页
+const goUserMenu = (userId) => {
+  router.push({
+    path: '/userInfo/video',
+    query: {
+      userId
+    }
+  })
+}
+getVideo()
+getCommentList()
+getCommendFeed()
 </script>
 <template>
   <div class="common-layout">
@@ -216,12 +253,18 @@ const dplayerObj = ref({
                   :key="item.id"
                 >
                   <!-- 头像 -->
-                  <span class="comment-avatar">
+                  <span
+                    @click="goUserMenu(item.comment_user.id)"
+                    class="comment-avatar"
+                  >
                     <el-avatar :src="item.comment_user.avatar"></el-avatar>
                   </span>
                   <!-- 评论主体 -->
                   <span class="comment-main">
-                    <div class="comment-user-name">
+                    <div
+                      @click="goUserMenu(item.comment_user.id)"
+                      class="comment-user-name"
+                    >
                       {{ item.comment_user.name }}
                     </div>
                     <div class="comment-text">
@@ -240,17 +283,21 @@ const dplayerObj = ref({
                       <div class="item-center">
                         <span
                           ><el-avatar
+                            @click="goUserMenu(second.comment_user.id)"
                             :size="30"
                             :src="second.comment_user.avatar"
                           ></el-avatar
                         ></span>
-                        <span class="second-comment-user-name">{{
-                          second.comment_user.name
-                        }}</span>
+                        <span
+                          @click="goUserMenu(second.comment_user.id)"
+                          class="second-comment-user-name"
+                          >{{ second.comment_user.name }}</span
+                        >
                         <span class="item-center" style="margin-left: 10px"
-                          >回复<a class="second-comment-user-name">{{
-                            second.to_user.name
-                          }}</a
+                          >回复<a
+                            class="second-comment-user-name"
+                            @click="goUserMenu(second.to_user.id)"
+                            >{{ second.to_user.name }}</a
                           >：</span
                         >
                         <span class="second-comment-text">{{
@@ -304,9 +351,15 @@ const dplayerObj = ref({
           <div class="right">
             <!-- 创作者 -->
             <div class="create-user">
-              <el-avatar size="large" :src="video.user.avatar" />
+              <el-avatar
+                @click="goUserMenu(video.user.id)"
+                size="large"
+                :src="video.user.avatar"
+              />
               <div class="name-like">
-                <div class="user-name">{{ video.user.name }}</div>
+                <div @click="goUserMenu(video.user.id)" class="user-name">
+                  {{ video.user.name }}
+                </div>
                 <el-button
                   v-if="fan.status === 0"
                   @click="onFan"
@@ -326,8 +379,43 @@ const dplayerObj = ref({
               </div>
             </div>
             <div class="commend-video">
+              <div class="title">推荐视频：</div>
               <ul>
-                <li><el-image></el-image></li>
+                <li
+                  class="video"
+                  v-for="video in commendVideoList"
+                  :key="video.id"
+                >
+                  <span class="video-left">
+                    <el-image
+                      @click="goVideoDetail(video.id)"
+                      class="video-image"
+                      :src="video.video_cover_url"
+                    ></el-image>
+                  </span>
+
+                  <span class="video-right">
+                    <span class="video-name" @click="goVideoDetail(video.id)">
+                      {{ video.video_name }}</span
+                    >
+                    <span class="user-name" @click="goUserMenu(video.user.id)"
+                      ><SvgIcon
+                        name="person"
+                        color="#9499a0"
+                        size="15"
+                      ></SvgIcon>
+                      {{ video.user.name }}</span
+                    >
+                    <span class="like-count"
+                      ><SvgIcon name="like" color="#9499a0" size="15"></SvgIcon
+                      >{{ video.like_count }}</span
+                    >
+                    <span class="play-count"
+                      ><SvgIcon name="play" color="#9499a0" size="15"></SvgIcon
+                      >{{ video.play_count }}</span
+                    >
+                  </span>
+                </li>
               </ul>
             </div>
           </div>
@@ -484,6 +572,55 @@ const dplayerObj = ref({
         margin-bottom: 10px;
         font-size: 14px;
         font-weight: 400;
+      }
+    }
+  }
+  .commend-video {
+    ul {
+      padding: 0;
+    }
+    .title {
+      margin-top: 20px;
+      font-size: 24px;
+      color: #61666d;
+    }
+    .video {
+      list-style-type: none;
+      margin-bottom: 30px;
+      display: flex;
+      .video-image {
+        height: 120px;
+        border-radius: 10px;
+        aspect-ratio: 16 / 9;
+      }
+      .video-right {
+        display: flex;
+        flex-direction: column;
+        span {
+          word-break: break-all;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+        }
+        .video-name {
+          font-size: 16px;
+          color: #18191c;
+          font-weight: 500;
+        }
+        .user-name {
+          font-size: 14px;
+          color: #9499a0;
+        }
+        .like-count {
+          font-size: 14px;
+          color: #9499a0;
+        }
+        .play-count {
+          font-size: 14px;
+          color: #9499a0;
+        }
       }
     }
   }

@@ -109,7 +109,7 @@ getChannel()
   .pagination {
     position: absolute;
     left: 45%;
-    bottom: 4%;
+    bottom: 0%;
   }
   .empty {
     position: absolute;

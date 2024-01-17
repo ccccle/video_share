@@ -72,6 +72,8 @@ const toVideoDetail = (id) => {
     .cover {
       .image {
         border-radius: 30px;
+        aspect-ratio: 16 / 9;
+        width: 100%;
       }
     }
     .name {

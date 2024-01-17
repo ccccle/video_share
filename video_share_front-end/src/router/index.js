@@ -85,6 +85,11 @@ const router = createRouter({
           path: '/back/userBack',
           name: 'userBack',
           component: () => import('@/views/backend/user/UserManage.vue')
+        },
+        {
+          path: '/back/channelBack',
+          name: 'channelBack',
+          component: () => import('@/views/backend/channel/ChannelManage.vue')
         }
       ]
     }

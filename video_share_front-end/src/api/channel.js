@@ -3,3 +3,11 @@ import request from '@/utils/request'
 export const channelGetListService = () => {
   return request.get('/api/v1/channel/getChannelList')
 }
+//删除分区
+export const channelDelService = (id) => {
+  return request.delete('/api/v1/channel/del', {
+    params: {
+      id
+    }
+  })
+}
