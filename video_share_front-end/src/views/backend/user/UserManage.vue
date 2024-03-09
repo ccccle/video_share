@@ -52,11 +52,19 @@ const handleDelete = async (index, row) => {
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
+    <el-pagination class="user-page"
       layout="prev, pager, next"
       :total="Number(pageParams.total)"
       v-model:current-page="pageParams.page"
+      background
       @current-change="changeCurrent"
     />
   </div>
 </template>
+<style scoped>
+.user-page{
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+}
+</style>

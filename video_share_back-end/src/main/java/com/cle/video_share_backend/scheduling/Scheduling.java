@@ -29,7 +29,7 @@ public class Scheduling {
     /**
      * 定时从redis里面获取点赞数据同步到数据库
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void saveLikeFormRedisToDB() {
         List<Like> likeList = redisService.getLikeListFromRedis();
         //同步到数据库
@@ -41,7 +41,7 @@ public class Scheduling {
     /**
      * 定时从redis里面获取视频统计同步到数据库
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void saveVideoCountFormRedisToDB() {
         List<Video> videoList = redisService.getVideoCount();
         List<Reward> rewardList = rewardService.list();
@@ -69,6 +69,7 @@ public class Scheduling {
                             walletService.updateById(wallet);
                             //记录奖励
                             RewardHistory rewardHistory1 = new RewardHistory();
+                            rewardHistory1.setUserId(video.getUserId());
                             rewardHistory1.setRewardId(reward.getId());
                             rewardHistory1.setVideoId(video.getId());
                             rewardHistoryService.save(rewardHistory1);

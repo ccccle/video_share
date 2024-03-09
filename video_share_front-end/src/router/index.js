@@ -59,6 +59,11 @@ const router = createRouter({
             import('@/views/publish/personalCenter/personalCenter.vue')
         },
         {
+          path: '/publish/wallet',
+          name: 'wallet',
+          component: () => import('@/views/publish/wallet/wallet.vue')
+        },
+        {
           path: '/publish/videoManage',
           name: 'videoManage',
           component: () => import('@/views/publish/videoManage/VideoManage.vue')
@@ -90,6 +95,11 @@ const router = createRouter({
           path: '/back/channelBack',
           name: 'channelBack',
           component: () => import('@/views/backend/channel/ChannelManage.vue')
+        },
+        {
+          path: '/back/rewardBack',
+          name: 'rewardBack',
+          component: () => import('@/views/backend/reward/rewardManage.vue')
         }
       ]
     }

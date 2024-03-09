@@ -50,6 +50,11 @@ const router = useRouter()
                 ><SvgIcon name="person"></SvgIcon> 个人中心</span
               >
             </el-menu-item>
+            <el-menu-item @click="router.push('/publish/wallet')">
+              <span class="menu-item">
+                <SvgIcon name="wallet"></SvgIcon> 我的钱包</span
+              >
+            </el-menu-item>
           </el-menu>
         </el-aside>
         <el-main class="main">

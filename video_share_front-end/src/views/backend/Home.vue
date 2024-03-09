@@ -28,6 +28,11 @@ const router = useRouter()
                 ><SvgIcon name="channel"></SvgIcon> 分区管理</span
               >
             </el-menu-item>
+            <el-menu-item @click="router.push('/back/rewardBack')">
+              <span class="menu-item"
+                ><SvgIcon name="reward"></SvgIcon> 奖励设置</span
+              >
+            </el-menu-item>
           </el-menu>
         </el-aside>
         <el-main class="main">

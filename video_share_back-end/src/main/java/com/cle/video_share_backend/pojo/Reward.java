@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class Reward {
     @TableId
     private Long id;
+    @TableField("title")
+    private String title;
     @TableField("price")
     private Long price;
     @TableField("like_count")

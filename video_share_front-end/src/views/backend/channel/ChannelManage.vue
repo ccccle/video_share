@@ -40,11 +40,19 @@ const handleDelete = async (index, row) => {
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
+    <el-pagination class="channel-page"
       layout="prev, pager, next"
       :total="Number(pageParams.total)"
       v-model:current-page="pageParams.page"
       @current-change="changeCurrent"
+      background
     />
   </div>
 </template>
+<style scoped>
+.channel-page{
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+}
+</style>

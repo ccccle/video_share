@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class RewardHistory {
     @TableId
     private Long id;
+    @TableField("user_id")
+    private Long userId;
     @TableField("video_id")
     private Long videoId;
     @TableField("reward_id")
