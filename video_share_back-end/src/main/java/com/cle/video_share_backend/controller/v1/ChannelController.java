@@ -5,10 +5,7 @@ import com.cle.video_share_backend.pojo.Channel;
 import com.cle.video_share_backend.service.ChannelService;
 import com.cle.video_share_backend.vo.ChannelVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +22,13 @@ public class ChannelController {
     @DeleteMapping(" ")
     public ResponseResult delChannel(Long id){
         channelService.removeById(id);
+        return ResponseResult.success();
+    }
+    @GetMapping("/add")
+    public ResponseResult addChannel(String channelName){
+        Channel channel = new Channel();
+        channel.setChannelName(channelName);
+        channelService.save(channel);
         return ResponseResult.success();
     }
 }

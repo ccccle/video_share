@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { channelGetListService, channelDelService } from '@/api/channel.js'
+import { channelGetListService, channelDelService,channelAddService } from '@/api/channel.js'
 const channelList = ref()
 //分页参数
 const pageParams = ref({
@@ -22,8 +22,35 @@ const handleDelete = async (index, row) => {
   ElMessage.success('删除成功')
   getChannelList()
 }
+const addDialog = ref(false)
+const channelName = ref("123")
+const addChannel = async (channelName) => {
+  await channelAddService(channelName)
+  ElMessage.success('添加成功')
+  getChannelList()
+  addDialog.value = false
+  channelName.value=""
+}
 </script>
 <template>
+  <el-dialog
+    v-model="addDialog"
+    title="添加分区"
+    width="500"
+  >
+  <template #footer>
+    <el-input v-model="channelName" placeholder="输入分区名称" style="margin-bottom: 80px"></el-input>
+      <div class="dialog-footer">
+        <el-button @click="addDialog = false">取消</el-button>
+        <el-button type="primary" @click="addChannel(channelName)">
+          添加
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <div class="add-button">
+        <el-button type="primary" @click="addDialog=true">添加</el-button>
+    </div>
   <div>
     <el-table :data="channelList">
       <el-table-column type="index" label="序号" width="100" />
@@ -49,6 +76,7 @@ const handleDelete = async (index, row) => {
     />
   </div>
 </template>
+
 <style scoped>
 .channel-page{
       margin: 20px;

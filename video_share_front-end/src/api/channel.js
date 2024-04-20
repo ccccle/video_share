@@ -11,3 +11,10 @@ export const channelDelService = (id) => {
     }
   })
 }
+export const channelAddService = (channelName) => {
+  return request.get('/api/v1/channel/add', {
+    params: {
+      channelName
+    }
+  })
+}

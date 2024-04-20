@@ -64,8 +64,6 @@ public class FfmpegUtil {
 
     public static String getFirstFrame(String videoPath) {
         String outputImagePath = UUID.randomUUID() + ".png"; // 输出视频文件的路径
-
-
         // 使用 ffmpeg 获取视频封面
         String cmd = "ffmpeg -i " + videoPath + " -ss 00:00:01 -vframes 1 -y -loglevel quiet " + outputImagePath;
         Process process = null;

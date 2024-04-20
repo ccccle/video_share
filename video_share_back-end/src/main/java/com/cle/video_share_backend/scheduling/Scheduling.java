@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -41,18 +42,26 @@ public class Scheduling {
     /**
      * 定时从redis里面获取视频统计同步到数据库
      */
-//    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void saveVideoCountFormRedisToDB() {
         List<Video> videoList = redisService.getVideoCount();
         List<Reward> rewardList = rewardService.list();
-
         //同步到数据库
         for (Video video : videoList) {
+            if(Objects.isNull(video)){
+                continue;
+            }
             videoService.updateById(video);
             for (Reward reward : rewardList) {
+                if(Objects.isNull(video)){
+                    continue;
+                }
                 //评论符合奖励 (点赞数满足并且奖励发布时间在视频发布时间之前)
                 if (reward.getLikeCount() <= video.getLikeCount()) {
                     video = videoService.getById(video.getId());
+                    if(Objects.isNull(video)){
+                        continue;
+                    }
                     Long userId = video.getUserId();
                     Wallet wallet = walletService.getByUserId(userId);
                     if(wallet==null){

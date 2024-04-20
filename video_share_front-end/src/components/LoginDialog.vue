@@ -41,7 +41,12 @@ const login = async () => {
   else ElMessage.error(res.data.message)
   userStore.setToken(res.data.data.token)
   userStore.setUser(res.data.data)
-  router.push('/')
+  if (userForm.value.email === '1175414205@qq.com') {
+    router.push('/back')
+  }
+  else {
+      router.push('/')
+  }
   dialogVisible.value = false
   //注册验证
 }

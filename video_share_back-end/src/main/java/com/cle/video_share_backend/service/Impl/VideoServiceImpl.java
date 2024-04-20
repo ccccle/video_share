@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -62,18 +63,18 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         try {
             InputStream inputStream = videoData.getResource().getInputStream();
             //把所有的格式都转为MP4
-            mp4 = FfmpegUtil.videoToMP4(inputStream);
+//            mp4 = FfmpegUtil.videoToMP4(inputStream);
             LocalDate now = LocalDate.now();
             //设置文件名方便minio分文件夹
             String mp4Name = "/" + now.getYear() + "/" + now.getMonth().getValue() + "/" + now.getDayOfMonth() + "/" + UUID.randomUUID() + ".MP4";
             //minio上传文件
-            MinioUtil.uploadFile(minioProperties.getBucket(), mp4Name, mp4);
+            MinioUtil.uploadFile(minioProperties.getBucket(), mp4Name, inputStream);
              png = UUID.randomUUID() + ".png";
             //如果不存在视频封面
             String pngName = "/" + now.getYear() + "/" + now.getMonth().getValue() + "/" + now.getDayOfMonth() + "/" + png;
             if (videoVo.getVideoCover() == null) {
                 //抓取视频内容第一帧作为封面
-                String firstFramePng = FfmpegUtil.getFirstFrame(mp4);
+                String firstFramePng = FfmpegUtil.getFirstFrame(minioBaseUrl + mp4Name);
                 //minio上传文件
                 MinioUtil.uploadFile(minioProperties.getBucket(), pngName, firstFramePng);
             }
@@ -93,9 +94,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            File mp4File = new File(mp4);
+//            File mp4File = new File(mp4);
             //删除临时文件
-            mp4File.delete();
+//            mp4File.delete();
             File pngNameFile = new File(png);
             //删除临时文件
             pngNameFile.delete();
@@ -125,6 +126,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             videoVo.setVideoCoverUrl(video.getVideoCover());
             Long userId = video.getUserId();
             User user = userMapper.selectById(userId);
+            if(Objects.isNull(user)){
+                //已注销
+                user = new User();
+                user.setAvatar("http://192.168.200.130:9000/video-share/default.jpg");
+                user.setName("已注销");
+                user.setId(0L);
+            }
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user, userVo);
             videoVo.setUserVo(userVo);
@@ -149,6 +157,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         VideoVo videoVo = new VideoVo();
         //获取创作者信息
         User user = userMapper.selectById(video.getUserId());
+        if(Objects.isNull(user)){
+            //已注销
+            user = new User();
+            user.setAvatar("http://192.168.200.130:9000/video-share/default.jpg");
+            user.setName("已注销");
+            user.setId(0L);
+        }
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(user,userVo);
         BeanUtils.copyProperties(video,videoVo);

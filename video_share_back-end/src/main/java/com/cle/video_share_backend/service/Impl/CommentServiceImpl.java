@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +52,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 CommentVo commentVo = new CommentVo();
                 BeanUtils.copyProperties(comment, commentVo);
                 User commentUser = userMapper.selectById(commentVo.getCommentUserId());
+                if(Objects.isNull(commentUser)){
+                    //已注销
+                    commentUser = new User();
+                    commentUser.setAvatar("http://192.168.200.130:9000/video-share/default.jpg");
+                    commentUser.setName("已注销");
+                    commentUser.setId(0L);
+                }
                 UserVo commentUserVo = new UserVo();
                 BeanUtils.copyProperties(commentUser,commentUserVo);
                 commentVo.setCommentUserVo(commentUserVo);
@@ -66,9 +74,23 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                     BeanUtils.copyProperties(comment, commentVo1);
                     User commentUser = userMapper.selectById(commentVo1.getCommentUserId());
                     UserVo commentUserVo = new UserVo();
+                    if(Objects.isNull(commentUser)){
+                        //已注销
+                        commentUser = new User();
+                        commentUser.setAvatar("http://192.168.200.130:9000/video-share/default.jpg");
+                        commentUser.setName("已注销");
+                        commentUser.setId(0L);
+                    }
                     BeanUtils.copyProperties(commentUser,commentUserVo);
                     User toUser = userMapper.selectById(commentVo1.getToUserId());
                     UserVo toUserVo = new UserVo();
+                    if(Objects.isNull(toUser)){
+                        //已注销
+                        toUser = new User();
+                        toUser.setAvatar("http://192.168.200.130:9000/video-share/default.jpg");
+                        toUser.setName("已注销");
+                        toUser.setId(0L);
+                    }
                     BeanUtils.copyProperties(toUser,toUserVo);
                     commentVo1.setCommentUserVo(commentUserVo);
                     commentVo1.setToUserVo(toUserVo);
